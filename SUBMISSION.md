@@ -1,7 +1,9 @@
 # NHAI Hackathon 7.0 — Submission Summary
 
-## Team / Developer
-[Leave blank — I will fill this]
+## Team
+  1. Manasvi Agarkar 
+  2. Aman Nakashe 
+
 
 ## Solution Title
 NHAI FaceRec — 100% Offline Facial Recognition & Liveness Detection
