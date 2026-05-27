@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "NHAI FaceRec",
+    "slug": "nhai-facerec",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A0A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.nhai.facerec",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app requires camera access for facial recognition and liveness detection.",
+        "NSPhotoLibraryUsageDescription": "This app may save attendance records locally."
+      },
+      "deploymentTarget": "12.0"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0A"
+      },
+      "package": "com.nhai.facerec",
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "minSdkVersion": 26
+    },
+    "plugins": [
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "NHAI FaceRec needs camera access for facial recognition and liveness detection.",
+          "enableCodeScanner": false,
+          "enableFrameProcessors": true
+        }
+      ]
+    ]
+  }
+}
