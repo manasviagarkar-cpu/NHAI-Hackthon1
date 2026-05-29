@@ -85,6 +85,7 @@ export default function RecognitionScreen({
 
   // Throttle tracking
   const lastProcessTime = useRef(0);
+  const workerEmbeddingsRef = useRef<{id: string, name: string, embedding: Float32Array}[]>([]);
 
   // Load models
   const faceDetectionModel = useTensorflowModel(
@@ -102,6 +103,11 @@ export default function RecognitionScreen({
     try {
       const allWorkers = getAllWorkers();
       setWorkers(allWorkers);
+      workerEmbeddingsRef.current = allWorkers.map(w => ({
+        id: w.workerId,
+        name: w.name,
+        embedding: w.embedding,
+      }));
 
       if (allWorkers.length === 0) {
         Alert.alert(
@@ -204,6 +210,45 @@ export default function RecognitionScreen({
     }
   }, [attendanceLogged]);
 
+  const onEmbeddingReady = useRunOnJS((
+    embArray: number[],
+    timeMs: number,
+    detected: boolean,
+    bx: number, by: number, bw: number, bh: number,
+  ) => {
+    setFaceDetected(detected);
+    setFaceBox({ x: bx, y: by, w: bw, h: bh });
+    setInferenceTime(timeMs);
+    if (!detected || embArray.length === 0) return;
+    const liveEmb = new Float32Array(embArray);
+    let bestScore = -1;
+    let bestName = '';
+    let bestId = '';
+    for (const worker of workerEmbeddingsRef.current) {
+      const score = cosineSimilarity(liveEmb, worker.embedding);
+      if (score > bestScore) {
+        bestScore = score;
+        bestName = worker.name;
+        bestId = worker.id;
+      }
+    }
+    if (bestScore > COSINE_THRESHOLD) {
+      setResult({
+        matched: true,
+        workerName: bestName,
+        workerId: bestId,
+        confidence: bestScore,
+        inferenceTimeMs: timeMs,
+      });
+      if (!attendanceLogged) {
+        try {
+          logAttendance(bestId, bestName, bestScore);
+          setAttendanceLogged(true);
+        } catch {}
+      }
+    }
+  }, [attendanceLogged]);
+
   /**
    * Frame processor — detects face, extracts embedding, and matches
    * against registered workers. Throttled to run every 200ms.
@@ -303,15 +348,17 @@ export default function RecognitionScreen({
 
       // For the hackathon demo, we compute similarity on the JS thread
       // via the onRecognitionResult callback
-      onRecognitionResult(
-        false, '', '', 0, elapsed,
-        true, pixelX, pixelY, pixelW, pixelH
+      onEmbeddingReady(
+        Array.from(normalizedEmb),
+        elapsed,
+        true,
+        pixelX, pixelY, pixelW, pixelH
       );
     } catch {
       const elapsed = performance.now() - startTime;
       onRecognitionResult(false, '', '', 0, elapsed, false, 0, 0, 0, 0);
     }
-  }, [faceDetectionModel, embeddingModel, onRecognitionResult]);
+  }, [faceDetectionModel, embeddingModel, onRecognitionResult, onEmbeddingReady]);
 
   /**
    * Resets the recognition state for a new session.
