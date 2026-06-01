@@ -17,3 +17,22 @@ assets/models/face_landmark.tflite
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+
+# Flutter/Dart build files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+build/
+
+# IDE/Editor configurations
+.idea/
+*.iml
+*.ipr
+*.iws
+.metadata
+.vscode/
+

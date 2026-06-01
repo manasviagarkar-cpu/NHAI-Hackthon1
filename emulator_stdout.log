@@ -1,0 +1,110 @@
+INFO         | Android emulator version 36.1.9.0 (build_id 13823996) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+INFO         | Found systemPath C:\Users\Aman\AppData\Local\Android\Sdk\system-images\android-37.0\google_apis_playstore_ps16k\x86_64\
+WARNING      | Please update the emulator to one that supports the feature(s): QemuCameraSensorOrientation, VulkanVirtualQueue
+INFO         | IPv4 server found: 10.234.30.172
+INFO         | Ignore IPv6 address: 2872:3559:4302:0:6063:3559:4302:0
+INFO         | Ignore IPv6 address: 2872:3559:4302:0:6063:3559:4302:0
+INFO         | Ignore IPv6 address: 2872:3559:4302:0:6063:3559:4302:0
+INFO         | Guest GLES Driver: Auto (ext controls)
+library_mode host gpu mode host
+INFO         | emuglConfig_get_vulkan_hardware_gpu_support_info: Found physical GPU 'AMD Radeon(TM) Graphics', type: VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU, apiVersion: 1.3.237, driverVersion: 2.0.250
+
+INFO         | Enabled VulkanAllocateDeviceMemoryOnly feature for gpu vendor AMD Radeon(TM) Graphics on Linux
+
+INFO         | GPU device local memory = 512MB
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasCompatibleHypervisor
+INFO         |      Ok: Hypervisor compatibility to run avd: `Pixel_8` are met
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `Pixel_8` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU requirements to run avd: `Pixel_8` are passed
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `Pixel_8` are met
+INFO         | Critical: Failed to load opengl32sw (The specified module could not be found.) (:0, )
+INFO         | Warning: Software OpenGL failed. Falling back to system OpenGL. (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_btn_xr_environment_living_room_day_clicked() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_btn_xr_environment_living_room_night_clicked() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_new_posture_requested(int) (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_posture_selection_dialog() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_new_resizable_requested(PresetEmulatorSizeType) (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_resizable_dialog() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_xr_environment_mode_changed(int) (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_xr_environment_mode_dialog() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_xr_input_mode_changed(int) (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_dismiss_xr_input_mode_dialog() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_sleep_timer_done() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_unfold_timer_done() (:0, )
+INFO         | Storing crashdata in: C:\Users\Aman\AppData\Local\Temp\\AndroidEmulator\emu-crash-36.1.9.db, detection is enabled for process: 23040
+INFO         | Initializing hardware OpenGLES emulation support
+INFO         | HealthMonitor disabled.
+INFO         | SharedLibrary::open for [vulkan-1.dll]
+INFO         | SharedLibrary::open for [vulkan-1.dll]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [vulkan-1.dll] (win32): call LoadLibrary
+INFO         | SharedLibrary::open succeeded for [vulkan-1.dll]. File name: [C:\WINDOWS\SYSTEM32\vulkan-1.dll]
+INFO         | Added library: vulkan-1.dll
+INFO         | Selecting Vulkan device: AMD Radeon(TM) Graphics, Version: 1.3.237
+INFO         | Disabling sparse binding feature support
+INFO         | SharedLibrary::open for [opengl32.dll]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [opengl32.dll] (win32): call LoadLibrary
+INFO         | SharedLibrary::open succeeded for [opengl32.dll]. File name: [C:\WINDOWS\SYSTEM32\opengl32.DLL]
+INFO         | SharedLibrary::open for [libshadertranslator.dll]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [libshadertranslator.dll] (win32): call LoadLibrary
+INFO         | SharedLibrary::open succeeded for [libshadertranslator.dll]. File name: [C:\Users\Aman\AppData\Local\Android\Sdk\emulator\lib64\libshadertranslator.dll]
+INFO         | Initializing VkEmulation features:
+INFO         |     glInteropSupported: true
+INFO         |     useDeferredCommands: true
+INFO         |     createResourceWithRequirements: true
+INFO         |     useVulkanComposition: false
+INFO         |     useVulkanNativeSwapchain: false
+INFO         |     enable guestRenderDoc: false
+INFO         |     ASTC LDR emulation mode: Gpu
+INFO         |     enable ETC2 emulation: true
+INFO         |     enable Ycbcr emulation: false
+INFO         |     guestVulkanOnly: false
+INFO         |     useDedicatedAllocations: false
+INFO         | Graphics Adapter Vendor Google (ATI Technologies Inc.)
+INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (AMD Radeon(TM) Graphics)
+INFO         | Graphics API Version OpenGL ES 3.0 (4.5.0 Core Profile Context 22.40.37.05.230301)
+INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_OVR_multiview2 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 GL_EXT_texture_buffer GL_EXT_draw_buffers_indexed GL_EXT_clip_cull_distance 
+INFO         | Graphics Device Extensions N/A
+INFO         | Sending adb public key [QAAAAAO5RxBVhsiBeITiQkgCOus3Kn7OhaicDg4f+NMmzyrId01rfVWqtO4jWZJEL6CuY2bNtGCoKktdB3B7MyLpM++00+c+thRcjnXtAYsa2o2NwKyKPm6H8bt3GgARJtBIWkthgiUPtAFRumu7/U7O0sAJ6wiOEfNSvWIIGx5R8pzguKgWnThFOu88dfKWHWGuP4OjPx8x5E4rde3yi2uBrnEL5w9MZk07BXUt+6pu/dj7AucIvxYgcb9hE9h/eQPWUf2JxdHodGjl52HyIvG7tAc0UECehBw+cG4h1juDPa2FeAK9k4x08jJBXvnRKEV39lJAbS3LQ8h4CpoJCHLNDcbtpJqUfo7B8cJrvD3FGzsYMZz3NnvC/0XFh+Xar89X4pkk8Xq7ACR1qTXHpp7H45UCddnG71l+XKLzY8aIZ7zimsn0R3IKnzfL0MK5WORPXvLNxW5X97/BoviJcXnacyTrsxDDIc6LfvAO3ACjghRBrLlLodPFSqNr3EIPm3sqZsn/7nBUWuv3iVVJnBs9xjCMQ09SVfDA8Vr3W6cJPCoqMfpAucmaEOrCc1xTJcz6OAwZ2lOIBPh+6Y3OBXw3v757D8OvOGdL/q1tOztjmjfOyhDq96rtFEboJSyiCE29q0gk/4ehWYu3FwUo2JUc/zQ4lpD0n3qqEm3USvPC8pP2bxQ8ZwEAAQA= @unknown]
+WHPX on Windows 10.0.26200 detected.
+Windows Hypervisor Platform accelerator is operational
+INFO         | Monitoring duration of emulator setup.
+WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
+INFO         | Using security allow list from: C:\Users\Aman\AppData\Local\Android\Sdk\emulator\lib\emulator_access.json
+WARNING      | *** Basic token auth should only be used by android-studio ***
+INFO         | The active JSON Web Key Sets can be found here: C:\Users\Aman\AppData\Local\Temp\avd\running\23040\jwks\9d118311-6b80-4420-ab25-cbe4b4e55f16\active.jwk
+INFO         | Scanning C:\Users\Aman\AppData\Local\Temp\avd\running\23040\jwks\9d118311-6b80-4420-ab25-cbe4b4e55f16 for jwk keys.
+INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
+INFO         | Advertising in: C:\Users\Aman\AppData\Local\Temp\avd\running\pid_23040.ini
+INFO         | Setting display: 0 configuration to: 1080x2400, dpi: 420x420 
+INFO         | setDisplayActiveConfig 0
+ERROR        | Unable to connect to adb daemon on port: 5037
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasCompatibleHypervisor
+INFO         |      Ok: Hypervisor compatibility to run avd: `Pixel_8` are met
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `Pixel_8` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU requirements to run avd: `Pixel_8` are passed
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `Pixel_8` are met
+INFO         | Loading snapshot 'default_boot'...
+INFO         | OpenGL Vendor=[Google (ATI Technologies Inc.)]
+INFO         | OpenGL Renderer=[Android Emulator OpenGL ES Translator (AMD Radeon(TM) Graphics)]
+WARNING      | snapshot was created with gfxstream=0, but this emulator has gfxstream=1
+
+INFO         | OpenGL Version=[OpenGL ES 3.0 (4.5.0 Core Profile Context 22.40.37.05.230301)]
+WARNING      | Error -1 from the snapshot callback
+
+WARNING      | Failed to load snapshot 'default_boot'
+USER_INFO    | The emulator is starting from scratch. Reason: different renderer configured
+ERROR        | Unable to connect to adb daemon on port: 5037
+WARNING      | adb command 'C:\Users\Aman\AppData\Local\Android\Sdk\platform-tools\adb.exe -s emulator-5554 shell am start-foreground-service -e meter on com.android.emulator.radio.config/.MeterService ' failed: '* daemon not running; starting now at tcp:5037
+* daemon started successfully
+adb.exe: device offline'
+INFO         | Activated packet streamer for uwb emulation
+INFO         | Activated packet streamer for bluetooth emulation

@@ -1,0 +1,62 @@
+I0601 17:32:23.356071   20912 opengles.cpp:291] android_startOpenglesRenderer: gpu info
+I0601 17:32:23.357911   20912 opengles.cpp:292] GPU #1
+  Make: 1002
+  Model: AMD Radeon(TM) Graphics
+  Device ID: 164c
+
+I0601 17:32:23.964880   20912 userspace-boot-properties.cpp:766] Userspace boot properties:
+I0601 17:32:23.965789   20912 userspace-boot-properties.cpp:770]   androidboot.boot_devices=pci0000:00/0000:00:03.0 pci0000:00/0000:00:06.0
+I0601 17:32:23.966349   20912 userspace-boot-properties.cpp:770]   androidboot.dalvik.vm.heapsize=512m
+I0601 17:32:23.966986   20912 userspace-boot-properties.cpp:770]   androidboot.debug.hwui.renderer=skiagl
+I0601 17:32:23.967663   20912 userspace-boot-properties.cpp:770]   androidboot.hardware=ranchu
+I0601 17:32:23.967958   20912 userspace-boot-properties.cpp:770]   androidboot.hardware.gltransport=pipe
+I0601 17:32:23.968280   20912 userspace-boot-properties.cpp:770]   androidboot.hardware.vulkan=ranchu
+I0601 17:32:23.968666   20912 userspace-boot-properties.cpp:770]   androidboot.logcat=*:V
+I0601 17:32:23.968910   20912 userspace-boot-properties.cpp:770]   androidboot.opengles.version=196609
+I0601 17:32:23.969144   20912 userspace-boot-properties.cpp:770]   androidboot.qemu=1
+I0601 17:32:23.969520   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.adb.pubkey=QAAAAAO5RxBVhsiBeITiQkgCOus3Kn7OhaicDg4f+NMmzyrId01rfVWqtO4jWZJEL6CuY2bNtGCoKktdB3B7MyLpM++00+c+thRcjnXtAYsa2o2NwKyKPm6H8bt3GgARJtBIWkthgiUPtAFRumu7/U7O0sAJ6wiOEfNSvWIIGx5R8pzguKgWnThFOu88dfKWHWGuP4OjPx8x5E4rde3yi2uBrnEL5w9MZk07BXUt+6pu/dj7AucIvxYgcb9hE9h/eQPWUf2JxdHodGjl52HyIvG7tAc0UECehBw+cG4h1juDPa2FeAK9k4x08jJBXvnRKEV39lJAbS3LQ8h4CpoJCHLNDcbtpJqUfo7B8cJrvD3FGzsYMZz3NnvC/0XFh+Xar89X4pkk8Xq7ACR1qTXHpp7H45UCddnG71l+XKLzY8aIZ7zimsn0R3IKnzfL0MK5WORPXvLNxW5X97/BoviJcXnacyTrsxDDIc6LfvAO3ACjghRBrLlLodPFSqNr3EIPm3sqZsn/7nBUWuv3iVVJnBs9xjCMQ09SVfDA8Vr3W6cJPCoqMfpAucmaEOrCc1xTJcz6OAwZ2lOIBPh+6Y3OBXw3v757D8OvOGdL/q1tOztjmjfOyhDq96rtFEboJSyiCE29q0gk/4ehWYu3FwUo2JUc/zQ4lpD0n3qqEm3USvPC8pP2bxQ8ZwEAAQA= @unknown
+I0601 17:32:23.969851   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.avd_name=Pixel_8
+I0601 17:32:23.970212   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.camera_hq_edge_processing=0
+I0601 17:32:23.970440   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.camera_protocol_ver=1
+I0601 17:32:23.970673   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.cpuvulkan.version=4202496
+I0601 17:32:23.970906   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.gltransport.drawFlushInterval=800
+I0601 17:32:23.971123   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.gltransport.name=pipe
+I0601 17:32:23.971333   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.hwcodec.avcdec=2
+I0601 17:32:23.971545   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.hwcodec.hevcdec=2
+I0601 17:32:23.971773   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.hwcodec.vpxdec=2
+I0601 17:32:23.971998   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+I0601 17:32:23.972220   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.virtiowifi=1
+I0601 17:32:23.972439   20912 userspace-boot-properties.cpp:770]   androidboot.qemu.vsync=60
+I0601 17:32:23.972652   20912 userspace-boot-properties.cpp:770]   androidboot.serialno=EMULATOR36X1X9X0
+I0601 17:32:23.972887   20912 userspace-boot-properties.cpp:770]   androidboot.vbmeta.digest=be156995b6c1bed8ce039fe0ece0114dd2d8ab33815f5a1a7cb8882b88035f99
+I0601 17:32:23.973122   20912 userspace-boot-properties.cpp:770]   androidboot.vbmeta.hash_alg=sha256
+I0601 17:32:23.973344   20912 userspace-boot-properties.cpp:770]   androidboot.vbmeta.size=6720
+I0601 17:32:23.973565   20912 userspace-boot-properties.cpp:770]   androidboot.veritymode=enforcing
+netsimd I 06-01 12:02:25.384 daemon\src\rust_main.rs:100 - netsim artifacts path: "C:\\Users\\Aman\\AppData\\Local\\Temp\\netsimd"
+netsimd I 06-01 12:02:25.447 daemon\src\rust_main.rs:103 - NetsimdArgs {
+    fd_startup_str: None,
+    no_cli_ui: true,
+    no_web_ui: true,
+    pcap: false,
+    disable_address_reuse: false,
+    hci_port: None,
+    connector_instance: None,
+    instance: None,
+    logtostderr: false,
+    dev: false,
+    forward_host_mdns: false,
+    vsock: None,
+    config: None,
+    host_dns: Some(
+        "10.234.30.172",
+    ),
+    http_proxy: None,
+    wifi_tap: None,
+    wifi: None,
+    test_beacons: false,
+    no_test_beacons: false,
+    no_shutdown: false,
+    verbose: false,
+    version: false,
+    rssi: None,
+}
