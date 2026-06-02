@@ -37,6 +37,8 @@ import { WorkerCard } from '../components/WorkerCard';
 import { getAllWorkers, Worker } from '../database/WorkerRepository';
 import { logAttendance } from '../database/AttendanceRepository';
 import { cosineSimilarity } from '../ml/CosineSimilarity';
+import { preprocessForMobileFaceNet } from '../ml/FaceEmbedder';
+import { extractRgbPixelsFromFrame } from '../utils/ImagePreprocessor';
 import {
   COLORS,
   SPACING,
@@ -307,9 +309,25 @@ export default function RecognitionScreen({
       const pixelW = w * frameW * 0.8;
       const pixelH = h * frameH * 0.8;
 
-      // Step 2: Run MobileFaceNet on the frame to get embedding
+      // Step 2: Crop-then-infer — extract the face region first, then run MobileFaceNet
+      // This is more accurate than feeding the full frame: the model sees only the face.
+      const croppedRgbPixels = extractRgbPixelsFromFrame(frame, pixelX, pixelY, pixelW, pixelH);
+
+      if (croppedRgbPixels.length === 0) {
+        // Pixel extraction failed (e.g. frame.toArrayBuffer unavailable) — fallback gracefully
+        const elapsed = performance.now() - startTime;
+        onRecognitionResult(false, '', '', 0, elapsed, true, pixelX, pixelY, pixelW, pixelH);
+        return;
+      }
+
+      // Preprocess: resize to 112×112 and normalize to [-1, 1] for MobileFaceNet
+      const faceW = Math.max(1, Math.round(pixelW));
+      const faceH = Math.max(1, Math.round(pixelH));
+      const processedTensor = preprocessForMobileFaceNet(croppedRgbPixels, faceW, faceH);
+
+      // Step 3: Run MobileFaceNet on the preprocessed face crop tensor
       const embModel = embeddingModel.model;
-      const embOutputs = embModel.runSync([frame as any]);
+      const embOutputs = embModel.runSync([processedTensor]);
 
       if (!embOutputs || embOutputs.length === 0) {
         const elapsed = performance.now() - startTime;
@@ -335,17 +353,9 @@ export default function RecognitionScreen({
         }
       }
 
-      // Step 3: Send embedding + bbox to JS thread for cosine similarity matching.
-      // BlazeFace bbox (pixelX, pixelY, pixelW, pixelH) is forwarded for
-      // debugging and bounding-box overlay rendering.
+      // Step 4: Send embedding + bbox to JS thread for cosine similarity matching.
+      // Cosine similarity is performed on the JS thread via onEmbeddingReady.
       const elapsed = performance.now() - startTime;
-
-      // Architecture note: Full production pipeline would crop the face region
-      // using BlazeFace bbox coordinates before MobileFaceNet inference.
-      // Current implementation passes the full frame to MobileFaceNet which
-      // extracts the most prominent face embedding. This is valid for single-person
-      // authentication scenarios (one face per frame during verification).
-      // Cosine similarity matching is performed on the JS thread via onEmbeddingReady.
       onEmbeddingReady(
         Array.from(normalizedEmb),
         elapsed,

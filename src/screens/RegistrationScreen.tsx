@@ -37,7 +37,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BoundingBox } from '../components/BoundingBox';
 import { insertWorker, workerExists } from '../database/WorkerRepository';
 import { averageEmbeddings } from '../ml/CosineSimilarity';
-import { postprocessEmbedding } from '../ml/FaceEmbedder';
+import { extractFaceEmbedding } from '../ml/FaceEmbedder';
+import { extractRgbPixelsFromFrame } from '../utils/ImagePreprocessor';
 import {
   COLORS,
   RADIUS,
@@ -80,6 +81,9 @@ export default function RegistrationScreen({
   const [capturedCount, setCapturedCount] = useState(0);
   const [embeddings, setEmbeddings] = useState<Float32Array[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Ref to hold the latest camera frame so handleCapture (JS thread) can access it
+  const frameProcessorFrame = useRef<any>(null);
 
   // Animations
   const successAnim = useRef(new Animated.Value(0)).current;
@@ -127,6 +131,9 @@ export default function RegistrationScreen({
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet';
     if (faceDetectionModel.state !== 'loaded') return;
+
+    // Store the latest frame so handleCapture (running on JS thread) can access pixel data
+    frameProcessorFrame.current = frame;
 
     try {
       const model = faceDetectionModel.model;
@@ -187,63 +194,50 @@ export default function RegistrationScreen({
     setIsProcessing(true);
 
     try {
-      // NOTE: Frame processors run on the worklet thread and cannot call
-      // async JS. We capture the embedding synchronously using the last
-      // processed frame reference held by the frame processor. Because
-      // handleCapture is triggered by a user tap (JS thread), we invoke
-      // the models directly here using the same TFLite model instances
-      // that are already loaded and warmed-up by the live frame processor.
-
-      // Step 1: Run BlazeFace to detect face and get bounding box
-      const detModel = faceDetectionModel.model;
-      const detOutputs = detModel.runSync([undefined as any]);
-
-      if (!detOutputs || detOutputs.length < 2) {
-        throw new Error('No face detected');
+      // Ensure we have a recent camera frame stored by the frame processor
+      const latestFrame = frameProcessorFrame.current;
+      if (!latestFrame) {
+        throw new Error('No camera frame available — please wait a moment and try again.');
       }
 
-      const classificators = detOutputs[1] as Float32Array;
-      let bestScore = 0;
-      let bestIdx = -1;
-      for (let i = 0; i < Math.min(classificators.length, 896); i++) {
-        const score = 1 / (1 + Math.exp(-classificators[i]));
-        if (score > bestScore) { bestScore = score; bestIdx = i; }
+      // Use the face bounding box tracked by the live frame processor (already in state)
+      const { x: bx, y: by, w: bw, h: bh } = faceBox;
+
+      if (bw <= 0 || bh <= 0) {
+        throw new Error('Face bounding box is invalid — please center your face and try again.');
       }
 
-      if (bestScore < 0.75 || bestIdx < 0) {
-        throw new Error('Face confidence too low — please center your face');
+      // Step 1: Extract RGB pixel data for the detected face crop from the latest frame
+      // extractRgbPixelsFromFrame uses frame.toArrayBuffer() (VisionCamera v4 API)
+      // and slices the crop region from the RGB backing buffer
+      const croppedRgbPixels = extractRgbPixelsFromFrame(latestFrame, bx, by, bw, bh);
+
+      if (croppedRgbPixels.length === 0) {
+        throw new Error(
+          'Could not extract face pixels from frame. Please ensure camera permission is granted and try again.'
+        );
       }
 
-      // Step 2: Run MobileFaceNet on detected face frame
-      const embModel = embeddingModel.model;
-      const embOutputs = embModel.runSync([undefined as any]);
+      // Step 2: Run MobileFaceNet on the cropped, preprocessed face image
+      // extractFaceEmbedding handles: resize to 112×112 → normalize to [-1,1] → inference → L2 normalize
+      const { embedding: realEmbedding, success, error: embError } = extractFaceEmbedding(
+        croppedRgbPixels,
+        Math.round(bw),
+        Math.round(bh),
+        (inputTensor) => embeddingModel.model.runSync([inputTensor]) as Float32Array
+      );
 
-      if (!embOutputs || embOutputs.length === 0) {
-        throw new Error('Embedding extraction failed');
+      if (!success || !realEmbedding) {
+        throw new Error(embError || 'Embedding extraction failed — please try again.');
       }
 
-      const rawEmbedding = embOutputs[0] as Float32Array;
-
-      // Step 3: L2 normalize the embedding
-      let norm = 0;
-      for (let i = 0; i < 128; i++) {
-        if (i < rawEmbedding.length) norm += rawEmbedding[i] * rawEmbedding[i];
-      }
-      norm = Math.sqrt(norm);
-
-      const normalizedEmbedding = new Float32Array(128);
-      for (let i = 0; i < 128; i++) {
-        normalizedEmbedding[i] = (i < rawEmbedding.length && norm > 0)
-          ? rawEmbedding[i] / norm
-          : 0;
-      }
-
-      setEmbeddings(prev => [...prev, normalizedEmbedding]);
+      // Step 3: Store embedding and update capture count
+      setEmbeddings(prev => [...prev, realEmbedding]);
       setCapturedCount(prev => prev + 1);
 
       if (capturedCount + 1 >= REGISTRATION_FRAME_COUNT) {
-        // All captures done — proceed to save
-        setTimeout(() => saveRegistration([...embeddings, normalizedEmbedding]), 500);
+        // All captures done — average embeddings and save to database
+        setTimeout(() => saveRegistration([...embeddings, realEmbedding]), 500);
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Failed to capture face. Please try again.';
@@ -251,7 +245,7 @@ export default function RegistrationScreen({
     } finally {
       setIsProcessing(false);
     }
-  }, [faceDetected, modelsReady, isProcessing, capturedCount, faceDetectionModel, embeddingModel, embeddings]);
+  }, [faceDetected, modelsReady, isProcessing, capturedCount, faceBox, embeddingModel, embeddings, saveRegistration]);
 
   /**
    * Averages captured embeddings and saves the worker to the database.

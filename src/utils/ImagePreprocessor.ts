@@ -223,3 +223,71 @@ export function validatePixelBuffer(
   const expectedSize = width * height * channels;
   return pixels.length >= expectedSize;
 }
+
+/**
+ * Extracts a cropped RGB region from a VisionCamera Frame object.
+ *
+ * VisionCamera v4 exposes `frame.toArrayBuffer()` on the worklet thread, which returns
+ * the underlying pixel buffer. Since the Camera component is configured with
+ * `pixelFormat="rgb"`, the buffer is packed RGB (3 bytes per pixel, row-major, no padding).
+ *
+ * This function:
+ *   1. Calls `frame.toArrayBuffer()` to get the backing memory
+ *   2. Creates a `Uint8Array` view over it
+ *   3. Extracts the requested crop region row-by-row using the frame stride
+ *   4. Returns an empty Uint8Array if the API is unavailable (graceful degradation)
+ *
+ * @param {any} frame - VisionCamera Frame object from useFrameProcessor
+ * @param {number} cropX - X coordinate of the crop origin (pixels, clamped to frame bounds)
+ * @param {number} cropY - Y coordinate of the crop origin (pixels, clamped to frame bounds)
+ * @param {number} cropWidth - Width of the crop region in pixels
+ * @param {number} cropHeight - Height of the crop region in pixels
+ * @returns {Uint8Array} Cropped RGB pixel data (cropWidth × cropHeight × 3 bytes)
+ */
+export function extractRgbPixelsFromFrame(
+  frame: any,
+  cropX: number,
+  cropY: number,
+  cropWidth: number,
+  cropHeight: number
+): Uint8Array {
+  // Graceful degradation: if frame or toArrayBuffer is not available, return empty buffer
+  if (!frame || typeof frame.toArrayBuffer !== 'function') {
+    return new Uint8Array(0);
+  }
+
+  try {
+    const frameWidth: number = frame.width;
+    const frameHeight: number = frame.height;
+
+    // Clamp crop region to frame bounds to prevent buffer overruns
+    const safeX = Math.max(0, Math.min(Math.round(cropX), frameWidth - 1));
+    const safeY = Math.max(0, Math.min(Math.round(cropY), frameHeight - 1));
+    const safeW = Math.max(1, Math.min(Math.round(cropWidth), frameWidth - safeX));
+    const safeH = Math.max(1, Math.min(Math.round(cropHeight), frameHeight - safeY));
+
+    // Get the underlying pixel buffer from VisionCamera (RGB, 3 bytes/pixel)
+    const arrayBuffer: ArrayBuffer = frame.toArrayBuffer();
+    const fullPixels = new Uint8Array(arrayBuffer);
+
+    // Each row is frameWidth * 3 bytes (RGB, no stride padding with pixelFormat="rgb")
+    const stride = frameWidth * 3;
+    const cropped = new Uint8Array(safeW * safeH * 3);
+
+    for (let row = 0; row < safeH; row++) {
+      const srcRowStart = (safeY + row) * stride + safeX * 3;
+      const dstRowStart = row * safeW * 3;
+      const rowBytes = safeW * 3;
+
+      for (let col = 0; col < rowBytes; col++) {
+        cropped[dstRowStart + col] = fullPixels[srcRowStart + col];
+      }
+    }
+
+    return cropped;
+  } catch {
+    // Return empty buffer on any error — callers must handle this
+    return new Uint8Array(0);
+  }
+}
+
