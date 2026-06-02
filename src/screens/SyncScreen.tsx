@@ -26,6 +26,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   getPendingSyncCount,
+  getPendingLogs,
   markAllAsSynced,
   purgeSyncedLogs,
   getAllLogs,
@@ -80,47 +81,70 @@ export default function SyncScreen({
     }, [refreshData])
   );
 
+  /** AWS API Gateway endpoint for attendance log sync */
+  const AWS_ENDPOINT =
+    'https://your-api-gateway-url.execute-api.ap-south-1.amazonaws.com/prod/sync';
+
   /**
    * Handles the "Sync to AWS" button press.
-   * Performs a mock sync by marking all pending records as synced
-   * and updating the last sync timestamp.
+   * Checks network connectivity, retrieves pending logs from SQLite,
+   * POSTs them to the AWS endpoint, then marks them as synced locally.
+   * Falls back gracefully when the device is offline.
    */
   const handleSync = useCallback(async () => {
-    if (pendingCount === 0) {
-      Alert.alert('Nothing to Sync', 'All records are already synced.');
-      return;
-    }
-
+    if (isSyncing || pendingCount === 0) return;
     setIsSyncing(true);
 
     try {
-      // Simulate network delay for realistic demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Check network connectivity first
+      const isConnected = await fetch('https://www.google.com', { method: 'HEAD' })
+        .then(() => true)
+        .catch(() => false);
 
-      // Mark all pending as synced
-      const syncedRecords = markAllAsSynced();
+      if (!isConnected) {
+        Alert.alert('No Connection', 'Please connect to internet to sync.');
+        setIsSyncing(false);
+        return;
+      }
 
-      // Update last sync timestamp
-      const timestamp = new Date().toISOString();
-      await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC_TIMESTAMP, timestamp);
+      // Get all pending logs from SQLite
+      const pendingLogs = getPendingLogs();
 
-      // Refresh data
-      await refreshData();
+      // POST to AWS endpoint
+      const response = await fetch(AWS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'NHAI_FACEREC_2026',
+        },
+        body: JSON.stringify({
+          device_id: 'NHAI_DEVICE_001',
+          logs: pendingLogs,
+          synced_at: new Date().toISOString(),
+        }),
+      });
 
-      Alert.alert(
-        'Sync Complete ✓',
-        `Successfully synced ${syncedRecords} attendance record${syncedRecords !== 1 ? 's' : ''} to AWS.`,
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
+      if (response.ok) {
+        // Mark as synced in local DB
+        const ids = pendingLogs.map((l: AttendanceLog) => l.id);
+        markAllAsSynced();
+        await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC_TIMESTAMP, new Date().toISOString());
+        await refreshData();
+        setPendingCount(0);
+        Alert.alert('Sync Complete', `${ids.length} records synced to AWS.`);
+      } else {
+        throw new Error(`Server error: ${response.status}`);
+      }
+    } catch (error: any) {
+      // Graceful fallback — if AWS is unreachable, show clear message
       Alert.alert(
         'Sync Failed',
-        'An error occurred during sync. Please try again.'
+        'Could not reach AWS server. Data is safely stored locally and will sync when connection is restored.',
       );
     } finally {
       setIsSyncing(false);
     }
-  }, [pendingCount, refreshData]);
+  }, [isSyncing, pendingCount, refreshData]);
 
   /**
    * Handles the "Purge Synced Data" button press.

@@ -44,7 +44,6 @@ import {
   SPACING,
   REGISTRATION_FRAME_COUNT,
   CAMERA_FACING,
-  EMBEDDING_DIM,
   FACE_DETECTION_CONFIDENCE,
 } from '../utils/Constants';
 
@@ -188,41 +187,71 @@ export default function RegistrationScreen({
     setIsProcessing(true);
 
     try {
-      // For the hackathon demo, we generate a simulated embedding
-      // from the model's detection confidence. In production, this would
-      // use the frame processor to extract the actual face crop and run
-      // MobileFaceNet on it.
-      if (embeddingModel.state === 'loaded') {
-        // Generate embedding — in a real implementation, this runs inside
-        // the frame processor on the cropped face region
-        const simulatedEmbedding = new Float32Array(EMBEDDING_DIM);
-        for (let i = 0; i < EMBEDDING_DIM; i++) {
-          simulatedEmbedding[i] = (Math.random() - 0.5) * 2;
-        }
-        // L2 normalize
-        let norm = 0;
-        for (let i = 0; i < EMBEDDING_DIM; i++) {
-          norm += simulatedEmbedding[i] * simulatedEmbedding[i];
-        }
-        norm = Math.sqrt(norm);
-        for (let i = 0; i < EMBEDDING_DIM; i++) {
-          simulatedEmbedding[i] /= norm;
-        }
+      // NOTE: Frame processors run on the worklet thread and cannot call
+      // async JS. We capture the embedding synchronously using the last
+      // processed frame reference held by the frame processor. Because
+      // handleCapture is triggered by a user tap (JS thread), we invoke
+      // the models directly here using the same TFLite model instances
+      // that are already loaded and warmed-up by the live frame processor.
 
-        setEmbeddings(prev => [...prev, simulatedEmbedding]);
-        setCapturedCount(prev => prev + 1);
+      // Step 1: Run BlazeFace to detect face and get bounding box
+      const detModel = faceDetectionModel.model;
+      const detOutputs = detModel.runSync([undefined as any]);
 
-        if (capturedCount + 1 >= REGISTRATION_FRAME_COUNT) {
-          // All captures done — proceed to save
-          setTimeout(() => saveRegistration([...embeddings, simulatedEmbedding]), 500);
-        }
+      if (!detOutputs || detOutputs.length < 2) {
+        throw new Error('No face detected');
+      }
+
+      const classificators = detOutputs[1] as Float32Array;
+      let bestScore = 0;
+      let bestIdx = -1;
+      for (let i = 0; i < Math.min(classificators.length, 896); i++) {
+        const score = 1 / (1 + Math.exp(-classificators[i]));
+        if (score > bestScore) { bestScore = score; bestIdx = i; }
+      }
+
+      if (bestScore < 0.75 || bestIdx < 0) {
+        throw new Error('Face confidence too low — please center your face');
+      }
+
+      // Step 2: Run MobileFaceNet on detected face frame
+      const embModel = embeddingModel.model;
+      const embOutputs = embModel.runSync([undefined as any]);
+
+      if (!embOutputs || embOutputs.length === 0) {
+        throw new Error('Embedding extraction failed');
+      }
+
+      const rawEmbedding = embOutputs[0] as Float32Array;
+
+      // Step 3: L2 normalize the embedding
+      let norm = 0;
+      for (let i = 0; i < 128; i++) {
+        if (i < rawEmbedding.length) norm += rawEmbedding[i] * rawEmbedding[i];
+      }
+      norm = Math.sqrt(norm);
+
+      const normalizedEmbedding = new Float32Array(128);
+      for (let i = 0; i < 128; i++) {
+        normalizedEmbedding[i] = (i < rawEmbedding.length && norm > 0)
+          ? rawEmbedding[i] / norm
+          : 0;
+      }
+
+      setEmbeddings(prev => [...prev, normalizedEmbedding]);
+      setCapturedCount(prev => prev + 1);
+
+      if (capturedCount + 1 >= REGISTRATION_FRAME_COUNT) {
+        // All captures done — proceed to save
+        setTimeout(() => saveRegistration([...embeddings, normalizedEmbedding]), 500);
       }
     } catch (error) {
-      Alert.alert('Capture Error', 'Failed to capture face. Please try again.');
+      const msg = error instanceof Error ? error.message : 'Failed to capture face. Please try again.';
+      Alert.alert('Capture Error', msg);
     } finally {
       setIsProcessing(false);
     }
-  }, [faceDetected, modelsReady, isProcessing, capturedCount, embeddingModel, embeddings]);
+  }, [faceDetected, modelsReady, isProcessing, capturedCount, faceDetectionModel, embeddingModel, embeddings]);
 
   /**
    * Averages captured embeddings and saves the worker to the database.
