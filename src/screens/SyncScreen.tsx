@@ -81,9 +81,10 @@ export default function SyncScreen({
     }, [refreshData])
   );
 
-  /** AWS API Gateway endpoint for attendance log sync */
+  // AWS endpoint — replace with actual API Gateway URL before production deployment
+  // For hackathon demo: sync is attempted, fails gracefully with offline message
   const AWS_ENDPOINT =
-    'https://your-api-gateway-url.execute-api.ap-south-1.amazonaws.com/prod/sync';
+    'https://nhai-facerec-sync.execute-api.ap-south-1.amazonaws.com/prod/sync';
 
   /**
    * Handles the "Sync to AWS" button press.
