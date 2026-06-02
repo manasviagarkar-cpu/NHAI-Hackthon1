@@ -39,7 +39,7 @@ Field authentication for highway construction workers and toll booth operators o
 *   **Dual-Stage Spoofing Check**: Prompts the worker to perform specific actions (blink eyes, smile) in sequence. Real-time Eye Aspect Ratio (EAR) and mouth curvature ratios verify a real human presence.
 *   **High-Speed Face Recognition**: Runs a 200ms throttled pipeline comparing the live face embedding against all registered worker profiles in the SQLite database using high-performance Cosine Similarity.
 *   **Live Inference Timer**: Displays the total time taken for face detection and matching in real-time (color-coded to indicate performance health).
-*   **Sync & Purge Dashboard**: Monitors pending uploads, triggers mock AWS synchronization, and allows one-tap database purging of synced logs to reclaim space.
+*   **Sync & Purge Dashboard**: Monitors pending uploads, triggers AWS synchronization with graceful offline fallback, and allows one-tap database purging of synced logs to reclaim space.
 
 ---
 
@@ -261,6 +261,17 @@ Below are the benchmark guidelines achieved during offline execution:
 *   **Peak RAM Consumption**: **~180MB - 240MB** (easily supported by 3GB RAM target devices).
 
 ---
+## 🔗 Datalake 3.0 Integration Guide
+
+NHAI FaceRec is architected as a plug-in module for Datalake 3.0:
+
+1. Copy `src/ml/`, `src/database/`, `assets/models/` into Datalake project
+2. Register FaceRec screens in Datalake's React Navigation stack  
+3. Add `.tflite` to Datalake's `metro.config.js` assetExts
+4. Standard attendance log schema for Datalake consumption:
+   - worker_id, worker_name, confidence, timestamp, synced flag
+5. All ML inference runs offline — zero network dependency at runtime
+
 
 ## ⚖️ License
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). All models used are open source and owned by their respective publishers (sirius-ai, Google MediaPipe).
