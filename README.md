@@ -4,6 +4,17 @@ Submission for **NHAI Innovation Hackathon 7.0**. An enterprise-grade, offline-f
 
 ---
 
+## 📱 App Visuals & UI
+
+| Home Screen | Facial Recognition | Liveness Detection |
+| :---: | :---: | :---: |
+| <img width="864" height="1536" alt="WhatsApp Image 2026-06-02 at 2 34 32 PM" src="https://github.com/user-attachments/assets/d454c688-bc7f-4b38-ad68-655ba4438bc1" />
+ | <img width="864" height="1536" alt="WhatsApp Image 2026-06-02 at 2 34 39 PM" src="https://github.com/user-attachments/assets/3c42ee2e-a9ca-4cd1-8c85-0f850b36acdf" />
+ | <img width="864" height="1536" alt="WhatsApp Image 2026-06-02 at 2 34 47 PM" src="https://github.com/user-attachments/assets/508e311c-4838-4eaf-a483-b18c4820d6c6" /> 
+|
+
+---
+
 ## 📖 Table of Contents
 1. [Overview & Project Goals](#-overview--project-goals)
 2. [Key Features](#-key-features)
@@ -60,10 +71,13 @@ Our system achieves a **96.4% verification accuracy** (TAR @ FAR=0.001) through 
 
 ---
 
-## 🏗 System Architecture
+## 🏗 System Architecture & Datalake 3.0 Integration
 
-The project directory structure follows React Native best practices:
+NHAI FaceRec is architected as a modular plug-in for the **Datalake 3.0** ecosystem.
 
+<img width="1600" height="453" alt="WhatsApp Image 2026-06-02 at 2 55 03 PM" src="https://github.com/user-attachments/assets/83bd63c8-e2c8-46d4-ae4c-7aa1f45bfd00" />
+
+### Directory Structure
 ```
 nhai-facerec/
 ├── assets/
