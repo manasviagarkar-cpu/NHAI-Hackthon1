@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/NHAI Hackthon.iml" filepath="$PROJECT_DIR$/.idea/NHAI Hackthon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/app.iml" filepath="$PROJECT_DIR$/android/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/react-settings-plugin/react-settings-plugin.iml" filepath="$PROJECT_DIR$/android/react-settings-plugin/react-settings-plugin.iml" />
+    </modules>
+  </component>
+</project>
